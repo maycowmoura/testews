@@ -1,6 +1,7 @@
 const http = require('http');
 const WebSocket = require('ws');
 const url = require('url');
+const https = require('https');
 
 const VALID_TOKENS = ['abc123', 'token456'];
 
@@ -47,9 +48,18 @@ server.on('upgrade', (req, socket, head) => {
   });
 });
 
-const HOST = process.env.HOST || '0.0.0.0';
+const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, HOST, () => {
   console.log(`Servidor WebSocket em http://${HOST}:${PORT}`);
 });
+
+
+setInterval(() => {
+  https.get('https://testews.onrender.com/', (res) => {
+    let data = '';
+    res.on('data', chunk => data += chunk);
+    res.on('end', () => console.log(`Fetch realizado: ${data}`));
+  }).on('error', err => console.error('Erro no fetch:', err));
+}, 14 * 60 * 1000);
