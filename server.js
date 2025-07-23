@@ -16,18 +16,16 @@ wss.on('connection', (ws, request, userId) => {
   ws.on('message', (msg) => {
     console.log(`Mensagem de ${userId}:`, msg.toString());
     clients.forEach((clientId, client) => {
-        client.send(`Usuário ${userId}: ${msg}`);
+        client.send(`${msg}`);
         console.log(`Enviando para ${clientId}: ${msg}`);
     })
   });
-  
 
   ws.on('close', () => {
     clients.delete(ws);
     console.log(`Usuário ${userId} desconectado`);
   });
 });
-
 
 server.on('upgrade', (req, socket, head) => {
   const { query } = url.parse(req.url, true);
@@ -46,6 +44,8 @@ server.on('upgrade', (req, socket, head) => {
   });
 });
 
-server.listen(3000, () => {
-  console.log('Servidor WebSocket em http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor WebSocket em http://0.0.0.0:${PORT}`);
 });
