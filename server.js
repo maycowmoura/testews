@@ -4,7 +4,10 @@ const url = require('url');
 
 const VALID_TOKENS = ['abc123', 'token456'];
 
-const server = http.createServer();
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('ok');
+});
 const wss = new WebSocket.Server({ noServer: true });
 
 const clients = new Map(); // socket => userId
@@ -44,8 +47,9 @@ server.on('upgrade', (req, socket, head) => {
   });
 });
 
+const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor WebSocket em http://0.0.0.0:${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`Servidor WebSocket em http://${HOST}:${PORT}`);
 });
