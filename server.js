@@ -2,6 +2,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const url = require('url');
 const https = require('https');
+process.env.TZ = 'America/Sao_Paulo';
 
 const VALID_TOKENS = ['abc123', 'token456'];
 
@@ -57,9 +58,10 @@ server.listen(PORT, HOST, () => {
 
 
 setInterval(() => {
-  https.get('https://testews.onrender.com/', (res) => {
+  const url = `https://testews.onrender.com/?${Math.random()}`;
+  https.get(url, (res) => {
     let data = '';
     res.on('data', chunk => data += chunk);
-    res.on('end', () => console.log(`Fetch realizado: ${data}`));
+    res.on('end', () => console.log(`Fetch realizado: ${url} ====>>> ${data}`));
   }).on('error', err => console.error('Erro no fetch:', err));
-}, 14 * 60 * 1000);
+}, Math.floor(Math.random() * (840000 - 480000 + 1)) + 480000);
