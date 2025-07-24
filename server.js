@@ -57,11 +57,15 @@ server.listen(PORT, HOST, () => {
 });
 
 
-setInterval(() => {
+function doFetch(){
   const url = `https://testews.onrender.com/?${Math.random()}`;
   https.get(url, (res) => {
     let data = '';
     res.on('data', chunk => data += chunk);
     res.on('end', () => console.log(`Fetch realizado: ${url} ====>>> ${data}`));
   }).on('error', err => console.error('Erro no fetch:', err));
-}, Math.floor(Math.random() * (840000 - 480000 + 1)) + 480000);
+  
+  setTimeout(doFetch, Math.floor(Math.random() * (840000 - 480000 + 1)) + 480000);
+};
+
+doFetch();
