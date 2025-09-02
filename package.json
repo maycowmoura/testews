@@ -1,9 +1,20 @@
 {
+  "name": "mqtt-websocket-server",
+  "version": "1.0.0",
+  "description": "Servidor MQTT usando Aedes e WebSocket para Render",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "http": "^0.0.1-security",
-    "jsonwebtoken": "^9.0.2",
-    "ws": "^8.18.3",
-    "aedes": "^0",
-    "websocket-stream": "^0"
-  }
+    "aedes": "^0.48.0",
+    "ws": "^8.15.0",
+    "websocket-stream": "^5.0.1"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "author": "Seu Nome",
+  "license": "MIT"
 }
