@@ -1,8 +1,8 @@
 const http = require('http');
 const url = require('url');
 const https = require('https');
-import aedes from "aedes";
-import ws from "websocket-stream";
+const aedes = require("aedes");
+const ws = require("websocket-stream");
 
 
 const broker = aedes();
@@ -32,6 +32,7 @@ function doFetch(){
 };
 
 doFetch();
+
 
 
 
