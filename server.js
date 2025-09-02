@@ -1,10 +1,9 @@
 import http from 'http';
 import https from 'https';
 import aedes from 'aedes';
-import WebSocket from 'ws';
+import { WebSocketServer } from 'ws'; // ⚠️ Importação correta
 import websocketStream from 'websocket-stream';
 
-// cria o broker MQTT
 const broker = aedes();
 
 // servidor HTTP (healthcheck)
@@ -14,12 +13,12 @@ const server = http.createServer((req, res) => {
 });
 
 // WebSocketServer ligado ao HTTP
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
   console.log('Cliente conectado');
 
-  // transforma o WS em stream compatível com Aedes
+  // transforma WS em stream compatível com Aedes
   const stream = websocketStream(ws);
   stream.pipe(broker).pipe(stream);
 
