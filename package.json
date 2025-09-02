@@ -2,6 +2,8 @@
   "dependencies": {
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
-    "ws": "^8.18.3"
+    "ws": "^8.18.3",
+    "aedes": "^0",
+    "websocket-stream": "^0"
   }
 }
