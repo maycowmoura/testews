@@ -1,39 +1,48 @@
+
 import http from 'http';
 import https from 'https';
 import aedes from 'aedes';
-import { WebSocketServer } from 'ws'; // ⚠️ Importação correta
-import websocketStream from 'websocket-stream';
+import websocket from 'websocket-stream';
 
+// --- BROKER MQTT COM AEDES ---
 const broker = aedes();
 
-// servidor HTTP (healthcheck)
-const server = http.createServer((req, res) => {
+// --- SERVIDOR HTTP E WEBSOCKET (para rodar no Render) ---
+const httpServer = http.createServer((req, res) => {
+  // Healthcheck simples
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end(new Date().toISOString() + ' - Servidor ativo\n');
+  res.end(new Date().toISOString() + ' - Servidor HTTP e Broker WebSocket ativos\n');
 });
 
-// WebSocketServer ligado ao HTTP
-const wss = new WebSocketServer({ server });
+// O Render vai fornecer a porta pela variável de ambiente PORT
+const port = process.env.PORT || 3000;
+websocket.createServer({ server: httpServer }, broker.handle);
 
-wss.on('connection', (ws) => {
-  console.log('Cliente conectado');
-
-  // transforma WS em stream compatível com Aedes
-  const stream = websocketStream(ws);
-  stream.pipe(broker).pipe(stream);
-
-  ws.on('close', () => console.log('Cliente desconectado'));
+httpServer.listen(port, function () {
+  console.log(`Servidor HTTP e Broker MQTT (WebSocket) escutando na porta ${port}`);
 });
 
-// porta e host
-const HOST = process.env.HOST || '0.0.0.0';
-const PORT = process.env.PORT || 3000;
-
-server.listen(PORT, HOST, () => {
-  console.log(`🚀 Servidor WebSocket/MQTT em http://${HOST}:${PORT}`);
+// --- LOGS DO BROKER ---
+broker.on('client', function (client) {
+  console.log(`[CLIENT_CONNECTED] Cliente conectado: ${client.id}`);
 });
 
-// ping periódico pra manter Render acordado
+broker.on('clientDisconnect', function (client) {
+  console.log(`[CLIENT_DISCONNECTED] Cliente desconectado: ${client.id}`);
+});
+
+broker.on('subscribe', function (subscriptions, client) {
+  console.log(`[SUBSCRIBE] Cliente ${client.id} se inscreveu em: ${subscriptions.map(s => s.topic).join(', ')}`);
+});
+
+broker.on('publish', function (packet, client) {
+  if (client) {
+    console.log(`[PUBLISH] Cliente ${client.id} publicou no tópico ${packet.topic}: ${packet.payload.toString()}`);
+  }
+});
+
+
+// --- CÓDIGO ORIGINAL (ping periódico) ---
 function doFetch() {
   const url = `https://testews.onrender.com/?${Math.random()}`;
   https.get(url, (res) => {
@@ -42,7 +51,9 @@ function doFetch() {
     res.on('end', () => console.log(`Fetch realizado: ${url} ====>>> ${data}`));
   }).on('error', err => console.error('Erro no fetch:', err));
 
+  // O timeout original foi mantido
   setTimeout(doFetch, Math.floor(Math.random() * (840000 - 480000 + 1)) + 480000);
 }
 
+// Inicia o ping periódico
 doFetch();
