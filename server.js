@@ -5,13 +5,14 @@ const aedes = require("aedes");
 const ws = require("websocket-stream");
 
 
-const broker = aedes();
-ws.createServer({ server }, broker.handle);
-
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end((new Date()).toISOString() + ' - Servidor ativo\n');
 });
+
+
+const broker = aedes();
+ws.createServer({ server }, broker.handle);
 
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,7 @@ function doFetch(){
 };
 
 doFetch();
+
 
 
 
