@@ -52,8 +52,10 @@ function doFetch() {
   }).on('error', err => console.error('Erro no fetch:', err));
 
   // O timeout original foi mantido
-  setTimeout(doFetch, Math.floor(Math.random() * (840000 - 480000 + 1)) + 480000);
+  setTimeout(doFetch, 300000);
+  // setTimeout(doFetch, Math.floor(Math.random() * (840000 - 480000 + 1)) + 480000);
 }
 
 // Inicia o ping periódico
 doFetch();
+
